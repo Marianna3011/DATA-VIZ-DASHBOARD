@@ -1,5 +1,6 @@
 library(shiny)
 library(shinydashboard)
+library(plotly)
 
 # Define UI for the dashboard
 ui <- dashboardPage(
