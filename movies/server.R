@@ -1,4 +1,3 @@
-# server.R
 library(shiny)
 library(tidyverse)
 library(plotly)
@@ -59,16 +58,16 @@ create_plot <- function(selected_year) {
         title = "No data available for this year",
         xaxis = list(title = "Rating"),
         yaxis = list(title = "Movies"),
+        text = "No data available for this year",
         showlegend = FALSE
       )
   }
   return(fig)
 }
 
-
 # Define server function
-function(input, output) {
+shinyServer(function(input, output) {
   output$topMoviesPlot <- renderPlotly({
     create_plot(input$year)
   })
-}
+})
