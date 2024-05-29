@@ -14,8 +14,10 @@ top5_movies <- movies %>%
   ungroup()
 
 
-pastel_palette <- viridis_pal(option = "D")(5)
-pastel_palette <- adjustcolor(pastel_palette, alpha.f = 0.5)
+#pastel_palette <- viridis_pal(option = "D")(5)
+#pastel_palette <- adjustcolor(pastel_palette, alpha.f = 0.5)
+pastel_palette = c("#FF9AA2", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#FFB7B2", "#FFB7B2", "#FFDAC1", "#FFB7B2")
+
 
 steps <- lapply(unique(top5_movies$Year), function(year) {
   list(
