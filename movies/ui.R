@@ -4,7 +4,7 @@ library(plotly)
 
 # Define UI for the dashboard
 ui <- dashboardPage(
-  dashboardHeader(title = "All About Movies"),
+  dashboardHeader(title = img(src = "PP_logotyp_RGB.png", width=200, align = "right") ),
   dashboardSidebar(),
   dashboardBody(
     includeCSS("styles.css"),  # Link to custom CSS file
