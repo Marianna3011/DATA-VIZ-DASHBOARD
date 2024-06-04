@@ -149,4 +149,9 @@ shinyServer(function(input, output) {
     create_plot(input$year)
   })
   output$Duration <-renderPlotly({create_plot_Durations()})
+  output$menu <- renderMenu({
+    sidebarMenu(
+      menuItem("Menu item", icon = icon("calendar"))
+    )
+  })
 })
