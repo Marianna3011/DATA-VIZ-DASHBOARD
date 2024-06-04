@@ -126,7 +126,6 @@ create_plot_Durations <- function() {
                          points = FALSE,
                          showlegend = FALSE) %>%
     layout(
-      title = "Distribution of Movie Durations by Genre",
       xaxis = list(title = "Duration (min)", range = c(min_duration, max_duration)),
       yaxis = list(title = "", showticklabels = FALSE), # Empty string to remove the y-axis tick labels
       updatemenus = list(
