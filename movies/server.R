@@ -17,9 +17,8 @@ top5_movies <- movies %>%
   slice_head(n = 5) %>%
   ungroup()
 
-# Define function to generate pastel palette
-pastel_palette <- viridis_pal(option = "D")(5)
-pastel_palette <- adjustcolor(pastel_palette, alpha.f = 0.5)
+# Define the pastel palette
+pastel_palette = c("#FF9AA2", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#FFB7B2", "#FFB7B2", "#FFDAC1", "#FFB7B2")
 
 # Set initial year
 initial_year <- unique(top5_movies$Year)[1]
