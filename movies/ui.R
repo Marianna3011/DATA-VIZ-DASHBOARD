@@ -14,7 +14,11 @@ ui <- dashboardPage(
         numericInput("year", "Select Year:", value = 2024, min = 1929, max = 2025, step = 1),
         plotlyOutput("topMoviesPlot")
       ),
-      width = 12
+      box(
+        title = "Distribution of Movie Durations by Genre",
+        plotlyOutput("Duration")
+      ),
+      width = 10
     )
   )
 )
