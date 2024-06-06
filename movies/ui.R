@@ -1,7 +1,8 @@
 library(shiny)
 library(shinydashboard)
 library(plotly)
-
+install.packages("slickR")
+library(slickR)
 # Define UI for the dashboard
 ui <- dashboardPage(
   dashboardHeader(title = img(src = "PP_logotyp_RGB.png", width=200, align = "right") ),
@@ -19,14 +20,7 @@ ui <- dashboardPage(
                 numericInput("year", "Select Year:", value = 2024, min = 1929, max = 2025, step = 1),
                 plotlyOutput("topMoviesPlot")
               ),
-              box(
-                title = "Distribution of Movie Durations by Genre",
-                plotlyOutput("Duration")
-              ),
-              box(
-                title = "Movie Releases by Year",
-                plotlyOutput("Releases")
-              ),
+              
               width = 10
             )
             
@@ -43,6 +37,17 @@ ui <- dashboardPage(
               tags$li("Yearly Trends: Understand how the film industry has changed over the years. Look at the number of movies released annually, their average ratings, and other key metrics."),
               tags$li("Interactive Visualizations: Engage with interactive charts that allow you to filter and drill down into specific data points. Customize your view to focus on the information that interests you most.")
             )
+    ),tabItem(tabName = "genres",fluidRow(
+      box(
+        title = "Distribution of Movie Durations by Genre",
+        plotlyOutput("Duration")
+      ),
+      box(
+        title = "Number of Movies Released Each Year",
+        plotlyOutput("Releases")
+      ),width = 10
+    )
+              
     )
   )
   )

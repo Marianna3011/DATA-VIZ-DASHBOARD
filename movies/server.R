@@ -170,7 +170,6 @@ create_realeases_by_year <- function() {
                         x = ~Year, y = ~Number_of_Movies, type = 'scatter', mode = 'lines+markers',
                         name = initial_genre) %>%
     layout(
-      title = "Number of Movies Released Each Year",
       xaxis = list(title = "Year"),
       yaxis = list(title = "Number of Movies"),
       updatemenus = list(
