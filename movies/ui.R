@@ -1,7 +1,6 @@
 library(shiny)
 library(shinydashboard)
 library(plotly)
-install.packages("slickR")
 library(slickR)
 # Define UI for the dashboard
 ui <- dashboardPage(
@@ -14,14 +13,23 @@ ui <- dashboardPage(
   ),
   dashboardBody(  tabItems(
     tabItem(tabName = "dashboard",   
-            fluidRow(
+            fluidRow(tags$style(
+              HTML(
+                "
+          .slick-slide img {
+            width: 100px; /* Set the width */
+            height: 100px; /* Set the height */
+          }
+          "
+              )
+            ),
               box(
                 title = "Select Year and View Top Movies",
                 numericInput("year", "Select Year:", value = 2024, min = 1929, max = 2025, step = 1),
                 plotlyOutput("topMoviesPlot")
               ),
               
-              width = 10
+              width=20
             )
             
     ),

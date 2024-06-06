@@ -201,6 +201,7 @@ shinyServer(function(input, output) {
   output$topMoviesPlot <- renderPlotly({
     create_plot(input$year)
   })
+
   output$Duration <-renderPlotly({create_plot_Durations()})
   output$Releases <-renderPlotly({create_realeases_by_year()})
   output$menu <- renderMenu({
