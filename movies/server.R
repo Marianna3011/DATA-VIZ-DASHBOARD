@@ -18,7 +18,7 @@ top5_movies <- movies %>%
   ungroup()
 
 # Define the pastel palette
-pastel_palette = c("#FF9AA2", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#FFB7B2", "#FFDAC1", "#FFB7B2", "#FFB7B2", "#FFDAC1", "#FFB7B2")
+pastel_palette = c("#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF", "#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF", "#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF", "#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF")
 
 # Set initial year
 initial_year <- unique(top5_movies$Year)[1]
@@ -76,7 +76,7 @@ create_plot_Durations <- function() {
   genres <- unique(movies2$Genre)
   
   # Define a pastel pink color for the violins
-  pastel_pink_color <- "#FFB6C1"
+  pastel_pink_color <- "#D9D9CD"
   
   # Determine the overall min and max duration for consistent scaling
   min_duration <- min(movies2$`Duration (min)`, na.rm = TRUE)
@@ -119,7 +119,7 @@ create_plot_Durations <- function() {
   violin_plot <- plot_ly(data = movies2, 
                          x = ~`Duration (min)`, 
                          type = "violin",
-                         color = I("#FFB6C1"),
+                         color = I("#B9B2AF"),
                          marker = list(color = pastel_pink_color),  # Set pastel pink color here
                          hoverinfo = "none",  # Disable hoverinfo
                          points = FALSE,
@@ -142,6 +142,52 @@ create_plot_Durations <- function() {
     )
   return(violin_plot)
 }
+
+
+### Top 10 Directors Based on Total and Avarage Ratings
+
+top_directors_total <- movies %>%
+  group_by(Director) %>%
+  summarise(Total_Rating = sum(Rating, na.rm = TRUE)) %>%
+  arrange(desc(Total_Rating)) %>%
+  slice_head(n = 10)
+
+top_directors_average <- movies %>%
+  group_by(Director) %>%
+  summarise(Average_Rating = mean(Rating, na.rm = TRUE)) %>%
+  arrange(desc(Average_Rating)) %>%
+  slice_head(n = 10)
+
+
+p <- plot_ly() %>%
+  add_bars(data = top_directors_total, x = ~Director, y = ~Total_Rating,
+           name = 'Total Ratings', marker = list(color = pastel_palette)) %>%
+  layout(title = "Top 10 Directors by Total Ratings",
+         xaxis = list(title = "Director", type = 'category'),
+         yaxis = list(title = "Ratings"),
+         barmode = 'group',
+         updatemenus = list(
+           list(
+             type = "dropdown",
+             active = 0,
+             buttons = list(
+               list(method = "update",
+                    args = list(list(y = list(top_directors_total$Total_Rating),
+                                     x = list(top_directors_total$Director)),
+                                list(title = "Top 10 Directors by Total Ratings")),
+                    label = "Total Ratings"),
+               list(method = "update",
+                    args = list(list(y = list(top_directors_average$Average_Rating),
+                                     x = list(top_directors_average$Director)),
+                                list(title = "Top 10 Directors by Average Ratings")),
+                    label = "Average Ratings")
+             ),
+             x = 0.05,
+             xanchor = "left",
+             y = 1.15,
+             yanchor = "top"
+           )
+         ))
 
 # Define server function
 shinyServer(function(input, output) {
