@@ -30,7 +30,14 @@ ui <- dashboardPage(
                 numericInput("year", "Select Year:", value = 2024, min = 1929, max = 2025, step = 1),
                 plotlyOutput("topMoviesPlot")
               ),
-              
+              box(
+                title = "Average Movie Ratings by Year",
+                plotlyOutput("Average")
+              ),
+              box(
+                title = "Top 10 Directors Based on Total and Avarage Ratings",
+                plotlyOutput("Directors")
+              ),
               width=20
               )
               
@@ -55,7 +62,12 @@ ui <- dashboardPage(
         box(
           title = "Number of Movies Released Each Year",
           plotlyOutput("Releases")
-        ),width = 10
+        ),
+        box(
+          title = "Percentage of Movies Produced Each Decade by Genre (Top Genres)",
+          plotlyOutput("Percentage")
+        ),
+        width = 10
       )
       
       )
