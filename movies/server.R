@@ -19,8 +19,7 @@ top5_movies <- movies %>%
   ungroup()
 
 # Define function to generate pastel palette
-pastel_palette <- viridis_pal(option = "D")(5)
-pastel_palette <- adjustcolor(pastel_palette, alpha.f = 0.5)
+pastel_palette <- c("#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF", "#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF", "#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF", "#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF")
 
 # Set initial year
 initial_year <- unique(top5_movies$Year)[1]
@@ -78,7 +77,7 @@ create_plot_Durations <- function() {
   genres <- unique(movies2$Genre)
   
   # Define a pastel pink color for the violins
-  pastel_pink_color <- "#FFB6C1"
+  pastel_pink_color <- "#B9B2AF"
   
   # Determine the overall min and max duration for consistent scaling
   min_duration <- min(movies2$`Duration (min)`, na.rm = TRUE)
@@ -121,7 +120,7 @@ create_plot_Durations <- function() {
   violin_plot <- plot_ly(data = movies2, 
                          x = ~`Duration (min)`, 
                          type = "violin",
-                         color = I("#FFB6C1"),
+                         color = I("#B9B2AF"),
                          marker = list(color = pastel_pink_color),  # Set pastel pink color here
                          hoverinfo = "none",  # Disable hoverinfo
                          points = FALSE,
