@@ -167,7 +167,9 @@ create_realeases_by_year <- function() {
   initial_genre <- "All Movies"
   line_graph <- plot_ly(data = movies_per_year_combined %>% filter(Genre == initial_genre),
                         x = ~Year, y = ~Number_of_Movies, type = 'scatter', mode = 'lines+markers',
-                        name = initial_genre) %>%
+                        name = initial_genre,
+                        line = list(color = '#B9B2AF'), # Set the color of the line
+                        marker = list(color = '#B9B2AF')) %>% # Set the color of the markers
     layout(
       xaxis = list(title = "Year"),
       yaxis = list(title = "Number of Movies"),
@@ -180,7 +182,11 @@ create_realeases_by_year <- function() {
                                x = list(movies_per_year_combined$Year[movies_per_year_combined$Genre == genre])),
                           list(title = paste("Number of Movies Released Each Year -", genre))),
               label = genre,
-              method = "restyle"
+              method = "restyle",
+              args2 = list(
+                list(line = list(color = '#B9B2AF'), # Update the line color dynamically
+                     marker = list(color = '#B9B2AF')) # Update marker color dynamically
+              )
             )
           }),
           direction = "down",
@@ -192,7 +198,144 @@ create_realeases_by_year <- function() {
       )
     )
   return(line_graph)
+}
+
+
+
+
+create_plot_Directors <- function() {
+  top_directors_total <- movies %>%
+    group_by(Director) %>%
+    summarise(Total_Rating = sum(Rating, na.rm = TRUE)) %>%
+    arrange(desc(Total_Rating)) %>%
+    slice_head(n = 10)
   
+  top_directors_average <- movies %>%
+    group_by(Director) %>%
+    summarise(Average_Rating = mean(Rating, na.rm = TRUE)) %>%
+    arrange(desc(Average_Rating)) %>%
+    slice_head(n = 10)
+  
+  p <- plot_ly() %>%
+    add_bars(data = top_directors_total, x = ~Director, y = ~Total_Rating,
+             name = 'Total Ratings', marker = list(color = pastel_palette)) %>%
+    layout(title = "Top 10 Directors by Total Ratings",
+           xaxis = list(title = "Director", type = 'category'),
+           yaxis = list(title = "Ratings"),
+           barmode = 'group',
+           updatemenus = list(
+             list(
+               type = "dropdown",
+               active = 0,
+               buttons = list(
+                 list(method = "update",
+                      args = list(list(y = list(top_directors_total$Total_Rating),
+                                       x = list(top_directors_total$Director)),
+                                  list(title = "Top 10 Directors by Total Ratings")),
+                      label = "Total Ratings"),
+                 list(method = "update",
+                      args = list(list(y = list(top_directors_average$Average_Rating),
+                                       x = list(top_directors_average$Director)),
+                                  list(title = "Top 10 Directors by Average Ratings")),
+                      label = "Average Ratings")
+               ),
+               x = 0.05,
+               xanchor = "left",
+               y = 1.15,
+               yanchor = "top"
+             )
+           ))
+  return(p)
+}
+
+create_plot_Average <- function() {
+  yearly_avg_ratings <- movies %>%
+    group_by(Year, Decade = floor(Year / 10) * 10) %>%
+    summarise(Average_Rating = mean(Rating, na.rm = TRUE)) %>%
+    arrange(Year)
+  
+  decade_avg_ratings <- movies %>%
+    group_by(Decade = floor(Year / 10) * 10) %>%
+    summarise(Average_Rating = mean(Rating, na.rm = TRUE)) %>%
+    arrange(Decade)
+  
+  unique_decades <- sort(unique(yearly_avg_ratings$Decade))
+  
+  palette_length <- length(unique_decades)
+  decade_colors <- colorRampPalette(c("#E3E6D8", "#CDABA2", "#E7D5C7", "#D9D9CD", "#B9B2AF"))(palette_length)
+  
+  colors_mapped <- setNames(decade_colors, unique_decades)
+  
+  p <- plot_ly() %>%
+    add_bars(data = yearly_avg_ratings, x = ~Year, y = ~Average_Rating,
+             name = 'Average Rating', marker = list(color = ~colors_mapped[as.character(Decade)])) %>%
+    layout(title = "Average Movie Ratings by Year/Decade",
+           xaxis = list(title = "Year/Decade"),
+           yaxis = list(title = "Average Rating"),
+           barmode = 'group',
+           updatemenus = list(
+             list(
+               type = "dropdown",
+               active = 0,
+               buttons = list(
+                 list(method = "restyle",
+                      args = list(list(y = list(yearly_avg_ratings$Average_Rating),
+                                       x = list(yearly_avg_ratings$Year))),
+                      label = "By Year"),
+                 list(method = "restyle",
+                      args = list(list(y = list(decade_avg_ratings$Average_Rating[decade_avg_ratings$Decade == decade_avg_ratings$Decade]),
+                                       x = list(decade_avg_ratings$Decade))),
+                      label = "By Decade")
+               ),
+               x = 0.05,
+               xanchor = "left",
+               y = 1.15,
+               yanchor = "top"
+             )
+           ))
+  return(p)
+}
+
+create_plot_Percentage <- function() {
+  movies_data <- movies %>%
+    mutate(Decade = floor(Year / 10) * 10) %>%
+    separate_rows(Genre, sep = ",\\s*")  
+  
+  top_genres <- movies_data %>%
+    group_by(Genre) %>%
+    summarise(Total = n()) %>%
+    top_n(5, Total) %>%  
+    pull(Genre)
+  
+  decade_genre_counts <- movies_data %>%
+    mutate(Genre = ifelse(Genre %in% top_genres, Genre, "Other")) %>%
+    group_by(Decade, Genre) %>%
+    summarise(Movie_Count = n(), .groups = 'drop') %>%
+    arrange(Decade)
+  
+  total_movies_per_decade <- decade_genre_counts %>%
+    group_by(Decade) %>%
+    summarise(Total_Movies = sum(Movie_Count), .groups = 'drop')
+  
+  decade_genre_counts <- decade_genre_counts %>%
+    left_join(total_movies_per_decade, by = "Decade") %>%
+    mutate(Percentage = (Movie_Count / Total_Movies) * 100)
+  
+  p <- ggplot(decade_genre_counts, aes(x = as.factor(Decade), y = Percentage, fill = Genre)) +
+    geom_bar(stat = "identity", position = "fill") +
+    scale_fill_manual(values = pastel_palette) +
+    labs(title = "Percentage of Movies Produced Each Decade by Genre (Top Genres)",
+         x = "Decade",
+         y = "Percentage of Total Movies",
+         fill = "Genre") +
+    scale_y_continuous(labels = scales::percent_format()) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Convert ggplot object to a plotly object
+  interactive_plot <- ggplotly(p)
+  
+  return(interactive_plot)
 }
 
 # Define server function
@@ -208,4 +351,7 @@ shinyServer(function(input, output) {
       menuItem("Menu item", icon = icon("calendar"))
     )
   })
+  output$Percentage <- renderPlotly({create_plot_Percentage()})
+  output$Average <- renderPlotly({create_plot_Average()})
+  output$Directors <- renderPlotly({create_plot_Directors()})
 })

@@ -152,3 +152,55 @@ p <- ggplot(decade_genre_counts, aes(x = as.factor(Decade), y = Percentage, fill
 interactive_plot <- ggplotly(p)
 
 interactive_plot
+
+
+
+
+
+
+
+
+
+
+library(dplyr)
+library(tidyr)
+library(plotly)
+
+# Assuming 'movies_data' is already loaded and structured properly
+movies_data <- movies_data %>%
+  mutate(Decade = floor(Year / 10) * 10) %>%
+  separate_rows(Genre, sep = ",\\s*")  
+
+top_genres <- movies_data %>%
+  group_by(Genre) %>%
+  summarise(Total = n()) %>%
+  top_n(5, Total) %>%  
+  pull(Genre)
+
+decade_genre_counts <- movies_data %>%
+  mutate(Genre = ifelse(Genre %in% top_genres, Genre, "Other")) %>%
+  group_by(Decade, Genre) %>%
+  summarise(Movie_Count = n(), .groups = 'drop') %>%
+  arrange(Decade)
+
+total_movies_per_decade <- decade_genre_counts %>%
+  group_by(Decade) %>%
+  summarise(Total_Movies = sum(Movie_Count), .groups = 'drop')
+
+decade_genre_counts <- decade_genre_counts %>%
+  left_join(total_movies_per_decade, by = "Decade") %>%
+  mutate(Percentage = (Movie_Count / Total_Movies) * 100)
+
+# Reordering genres so "Other" is at the bottom
+decade_genre_counts$Genre <- factor(decade_genre_counts$Genre, levels = c("Other", "Drama", "Action", "Adventure", "Comedy", "Crime" ))
+
+# Create Plotly interactive plot
+fig <- plot_ly(data = decade_genre_counts, x = ~as.factor(Decade), y = ~Percentage, type = 'bar', color = ~Genre, colors = custom_colors) %>%
+  layout(
+    yaxis = list(title = 'Percentage of Total Movies', tickformat = ",.0%"),
+    xaxis = list(title = 'Decade'),
+    barmode = 'stack',
+    title = 'Percentage of Movies Produced Each Decade by Genre (Top Genres)'
+  )
+
+fig
