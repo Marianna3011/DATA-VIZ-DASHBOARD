@@ -2,6 +2,8 @@ library(shiny)
 library(tidyverse)
 library(plotly)
 library(viridis)
+library(viridis)
+library(DT)
 
 # Load data
 movies <- read_csv("imdb-movies-dataset.csv")
@@ -337,7 +339,20 @@ create_plot_Percentage <- function() {
   
   return(interactive_plot)
 }
-
+create_data_table <- function() {
+  # Load required library
+  D= read_csv("imdb-movies-dataset.csv")
+  all_genres <- unique(D$Genre)
+  l = datatable(
+    data.frame(Genre = all_genres),
+    options = list(
+      pageLength = 5,  # Display 5 rows per page
+      lengthMenu = c(5, 10, 15),  # Customize the rows per page menu
+      dom = 'tip',  # Customizing the layout
+      ordering = TRUE  # Enable ordering of columns
+    ))
+  return(l)
+}
 # Define server function
 shinyServer(function(input, output) {
   output$topMoviesPlot <- renderPlotly({
@@ -354,4 +369,5 @@ shinyServer(function(input, output) {
   output$Percentage <- renderPlotly({create_plot_Percentage()})
   output$Average <- renderPlotly({create_plot_Average()})
   output$Directors <- renderPlotly({create_plot_Directors()})
+  output$DataTable <- renderDataTable({create_data_table()})
 })

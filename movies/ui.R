@@ -2,6 +2,8 @@ library(shiny)
 library(shinydashboard)
 library(plotly)
 library(slickR)
+library(viridis)
+library(DT)
 
 # Define UI for the dashboard
 ui <- dashboardPage(
@@ -9,6 +11,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("About", tabName = "about"),
+      
       menuItem("Dashboard", tabName = "dashboard"),
       menuItem("Genres", tabName = "genres"))
   ),
@@ -54,7 +57,8 @@ ui <- dashboardPage(
                 tags$li("Yearly Trends: Understand how the film industry has changed over the years. Look at the number of movies released annually, their average ratings, and other key metrics."),
                 tags$li("Interactive Visualizations: Engage with interactive charts that allow you to filter and drill down into specific data points. Customize your view to focus on the information that interests you most.")
               )
-      ),tabItem(tabName = "genres",fluidRow(
+      )
+      ,tabItem(tabName = "genres",fluidRow(
         box(
           title = "Distribution of Movie Durations by Genre",
           plotlyOutput("Duration")
@@ -66,6 +70,9 @@ ui <- dashboardPage(
         box(
           title = "Percentage of Movies Produced Each Decade by Genre (Top Genres)",
           plotlyOutput("Percentage")
+        ),box(
+          title = "Data Table",
+          DTOutput("DataTable") 
         ),
         width = 10
       )
